@@ -49,6 +49,7 @@ public class CustomSecurityConfiguration {
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/product/**").permitAll()
                 .anyRequest()
                 .authenticated();
 
