@@ -1,6 +1,7 @@
 package com.example.mock2.security.filter;
 
 import com.example.mock2.common.utils.JwtUtils;
+import com.example.mock2.security.config.AuthenticationPrinciple;
 import com.example.mock2.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,12 +33,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String jwt = parseJwtCookie(request);
+            String jwt = parseJwtBearer(request);
             System.out.println(jwt);
             if (jwt != null && jwtUtils.validateToken(jwt)) {
                 String username = jwtUtils.extractUsername(jwt);
 
-                UserDetails userDetails = userServices.loadUserByUsername(username);
+                AuthenticationPrinciple userDetails =(AuthenticationPrinciple) userServices.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

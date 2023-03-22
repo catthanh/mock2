@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.function.Function;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -25,15 +28,41 @@ public class Response<T> {
                 .setStatus("success");
     }
 
-    public static ResponseBuilder builder() {
-        return new ResponseBuilder();
+    public static <T,V> Response<V> success(T data, Function<T, V> mapper) {
+        return new Response<V>()
+                .setMessage("Success")
+                .setPayload(mapper.apply(data))
+                .setStatus("success");
     }
 
-    public static  Response paging(Page page) {
-        return new Response()
+    public static Response<Void> error(String message) {
+        return new Response<Void>()
+                .setMessage(message)
+                .setStatus("error");
+    }
+
+    public static Response<Void> internalServerError(String message) {
+        return new Response<Void>()
+                .setMessage(message)
+                .setStatus("error");
+    }
+
+    public static <T> ResponseBuilder<T> builder() {
+        return new ResponseBuilder<T>();
+    }
+
+    public static <K> Response<List<K>> paging(Page<K> page) {
+        return new Response<List<K>>()
                 .setMetadata(new PageMetadata(page.getSize(), page.getTotalElements(), page.getTotalPages(), page.getNumber()))
                 .setStatus("success")
                 .setPayload(page.getContent());
+    }
+
+    public static <K,V> Response<List<V>> paging(Page<K> page, Function<K,V> mapper) {
+        return new Response<List<V>>()
+                .setMetadata(new PageMetadata(page.getSize(), page.getTotalElements(), page.getTotalPages(), page.getNumber()))
+                .setStatus("success")
+                .setPayload(page.getContent().stream().map(mapper).toList());
     }
 
     @Getter

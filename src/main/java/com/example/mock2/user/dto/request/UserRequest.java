@@ -1,5 +1,6 @@
 package com.example.mock2.user.dto.request;
 
+import com.example.mock2.user.model.RoleEnum;
 import com.example.mock2.user.model.UserSexEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,4 +55,6 @@ public class UserRequest {
     private String password;
 
     private UserSexEnum sex;
+
+    private List<RoleEnum> roles;
 }

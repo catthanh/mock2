@@ -1,6 +1,7 @@
 package com.example.mock2.user.model;
 
 
+import com.example.mock2.cart.model.Cart;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,4 +50,13 @@ public class User {
             CascadeType.MERGE
     })
     private Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
+
+    public User setCart(Cart cart) {
+        cart.setUser(this);
+        this.cart = cart;
+        return this;
+    }
 }
