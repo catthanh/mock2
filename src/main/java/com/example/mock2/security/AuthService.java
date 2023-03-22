@@ -1,5 +1,6 @@
 package com.example.mock2.security;
 
+import com.example.mock2.common.exception.WrongcredentialException;
 import com.example.mock2.common.utils.JwtUtils;
 import com.example.mock2.security.dto.request.LoginRequest;
 import com.example.mock2.security.dto.request.RefreshRequest;
@@ -33,7 +34,7 @@ public class AuthService {
         Optional<User> user = userRepository.findByUsername(request.getUsername());
         if(user.isPresent()) {
             if(!passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
-                throw new RuntimeException("Password is incorrect");
+                throw new WrongcredentialException("Password is incorrect");
             }
             String accessToken = jwtUtils.generateToken(user.get().getUsername(), user.get().getRoles().stream().map(role -> role.getName().name()).toList());
             String refreshToken = jwtUtils.generateToken(user.get().getUsername(), user.get().getRoles().stream().map(role -> role.getName().name()).toList(), true);
