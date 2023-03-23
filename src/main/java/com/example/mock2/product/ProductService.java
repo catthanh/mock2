@@ -1,9 +1,12 @@
 package com.example.mock2.product;
 
+import com.example.mock2.common.dto.request.PaginationQuery;
 import com.example.mock2.product.dto.request.ProductRequest;
 import com.example.mock2.product.model.Product;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +30,9 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public List<Product> getAllProduct(){
-        return productRepository.findAll();
+    public Page<Product> getAllProduct(PaginationQuery paginationQuery){
+        Pageable pageable = paginationQuery.getPageRequest();
+        return productRepository.findAll(pageable);
     }
 
     public Product editProduct(ProductRequest productRequest, Integer id){
