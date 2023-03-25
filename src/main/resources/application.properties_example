@@ -17,4 +17,3 @@ spring.application.name=myapp
 # logging.file.max-size=5MB
 # logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n
 # logging.pattern.file= %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %msg%n
-
