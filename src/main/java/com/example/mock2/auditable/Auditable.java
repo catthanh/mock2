@@ -13,10 +13,14 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @MappedSuperclass // parent class not entity
 @EntityListeners(AuditingEntityListener.class)
@@ -38,4 +42,11 @@ public abstract class Auditable<T> {
   @LastModifiedBy
   @Column(name = "modified_by")
   protected T modifiedBy;
+
+  public Auditable(T createdBy, T modifiedBy) {
+    this.createdBy = createdBy;
+    this.modifiedBy = modifiedBy;
+  }
+
+
 }
