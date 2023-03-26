@@ -1,6 +1,9 @@
 package com.example.mock2.order_history;
 
 import com.example.mock2.order_history.model.OrderHistory;
+import com.example.mock2.order_history.model.OrderStatusEnum;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Integer> {
@@ -51,4 +55,9 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Inte
     @Transactional
     @Query(value = "delete from cart_product where cart_id = ?1", nativeQuery = true)
     void clearCart(int id);
+
+    @Query(value = "select cart_id from cart_product cp join cart c on cp.cart_id = c.id where c.id=?1", nativeQuery = true)
+    Integer getCartProductId(int id);
+
+    Page<OrderHistory> findByUserId(Pageable pageable, int id);
 }

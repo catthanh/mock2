@@ -6,10 +6,12 @@ import com.example.mock2.common.dto.request.PaginationQuery;
 import com.example.mock2.common.exception.NotFoundException;
 import com.example.mock2.common.exception.ProductAvailableException;
 import com.example.mock2.order_history.model.OrderHistory;
+import com.example.mock2.order_history.model.OrderStatusEnum;
 import com.example.mock2.product.ProductRepository;
 import com.example.mock2.security.config.AuthenticationPrinciple;
 import com.example.mock2.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -35,6 +37,10 @@ public class OrderHistoryService {
             throw new NotFoundException("Cart not found");
         } else {
             int id = authenticationPrinciple.getId();
+            Integer cart_product = orderHistoryRepository.getCartProductId(id);
+            if (cart_product == null){
+                throw new NotFoundException("Cart is empty");
+            }
             List<Integer> quantityList = orderHistoryRepository.getQuantity(id);
             System.out.println(quantityList);
             List<Integer> remainingQuantityList = orderHistoryRepository.getRemainingQuantity(id);
@@ -59,9 +65,9 @@ public class OrderHistoryService {
             List<List<Integer>> listItems = orderHistoryRepository.getCartProduct(id);
             String items = "";
             for(List<Integer> i : listItems){
-                System.out.println(productRepository.findById(i.get(0)).get().getName() + " - " + i.get(1) + "\n");
                 items += productRepository.findById(i.get(0)).get().getName() + " - " + i.get(1) + "\n";
             }
+            orderHistory.setOrderStatusEnum(OrderStatusEnum.SUCCESS);
             orderHistory.setItems(items);
             orderHistory.setTotal(price);
             orderHistoryRepository.clearCart(orderHistoryRepository.getCartId(id));
@@ -69,14 +75,19 @@ public class OrderHistoryService {
         }
     }
 
-    public OrderHistory getOrderHistoryById(){
+    public Page<OrderHistory> getOrderHistoryForUser(PaginationQuery paginationQuery){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AuthenticationPrinciple authenticationPrinciple = (AuthenticationPrinciple) authentication.getPrincipal();
         int id = authenticationPrinciple.getId();
-        return orderHistoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Pageable pageable = paginationQuery.getPageRequest();
+        if (!orderHistoryRepository.findByUserId(pageable, id).hasContent()){
+            throw new NotFoundException("You have no order history");
+        }
+        return orderHistoryRepository.findByUserId(pageable, id);
     }
 
-    public Page<OrderHistory> getAllOrderHistory(PaginationQuery paginationQuery){
+    public Page<OrderHistory> getAllOrderHistoryForAdmin(PaginationQuery paginationQuery){
         Pageable pageable = paginationQuery.getPageRequest();
         return orderHistoryRepository.findAll(pageable);
     }

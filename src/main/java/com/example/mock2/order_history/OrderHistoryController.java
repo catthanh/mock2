@@ -25,8 +25,13 @@ public class OrderHistoryController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-    public Response<OrderHistoryResponse> getInvoice(){
-        return Response.success(OrderHistoryResponse.of(orderHistoryService.getOrderHistoryById()));
+    public Response<List<OrderHistoryResponse>> getInvoice(@RequestParam(value = "page", required = false) Integer page,
+                                                     @RequestParam(value = "size", required = false) Integer size){
+        PaginationQuery paginationQuery = new PaginationQuery();
+        if (page != null && size != null) {
+            paginationQuery.setPageRequest(PageRequest.of(page, size));
+        }
+        return Response.paging(orderHistoryService.getOrderHistoryForUser(paginationQuery), OrderHistoryResponse::of);
     }
 
     @GetMapping("/admin")
@@ -37,6 +42,6 @@ public class OrderHistoryController {
         if (page != null && size != null) {
             paginationQuery.setPageRequest(PageRequest.of(page, size));
         }
-        return Response.paging(orderHistoryService.getAllOrderHistory(paginationQuery), OrderHistoryResponse::of);
+        return Response.paging(orderHistoryService.getAllOrderHistoryForAdmin(paginationQuery), OrderHistoryResponse::of);
     }
 }
