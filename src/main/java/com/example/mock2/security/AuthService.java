@@ -13,6 +13,8 @@ import com.example.mock2.user.model.Role;
 import com.example.mock2.user.model.RoleEnum;
 import com.example.mock2.user.model.User;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
@@ -39,6 +42,7 @@ public class AuthService {
             String accessToken = jwtUtils.generateToken(user.get().getUsername(), user.get().getRoles().stream().map(role -> role.getName().name()).toList());
             String refreshToken = jwtUtils.generateToken(user.get().getUsername(), user.get().getRoles().stream().map(role -> role.getName().name()).toList(), true);
             refreshTokenRepository.save(new RefreshToken().setToken(refreshToken).setActive(true).setFamily(UUID.randomUUID()));
+            log.trace("Login as {}", user.get().getUsername());
             return LoginResponse.of(user.get(), accessToken, refreshToken);
         }
         throw new RuntimeException("User not found");

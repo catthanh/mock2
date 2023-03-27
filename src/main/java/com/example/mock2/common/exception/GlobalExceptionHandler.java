@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -68,5 +69,12 @@ public class GlobalExceptionHandler {
         logger.error("Exception: {}", e.getClass().getName()+ " " +e.getMessage());
         e.printStackTrace();
         return Response.internalServerError("Internal Server Error");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public Response<Void> handleMaxSizeException(MaxUploadSizeExceededException e) {
+        logger.error("MaxUploadSizeExceededException: {}", e.getClass().getName()+ " " +e.getMessage());
+        return Response.error("One or More files are too large!");
     }
 }
