@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ import java.util.List;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class OrderHistoryResponse {
     private Integer id;
-    private String items;
+    private Map<String, Integer> items;
     private double total;
     private OrderStatusEnum orderStatusEnum;
     public static OrderHistoryResponse of(OrderHistory orderHistory){

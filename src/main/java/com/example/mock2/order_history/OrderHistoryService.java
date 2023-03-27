@@ -18,7 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -63,9 +65,10 @@ public class OrderHistoryService {
             OrderHistory orderHistory = new OrderHistory();
             orderHistory.setUser(userRepository.findById(id).get());
             List<List<Integer>> listItems = orderHistoryRepository.getCartProduct(id);
-            String items = "";
+            Map<String, Integer> items = new HashMap();
             for(List<Integer> i : listItems){
-                items += productRepository.findById(i.get(0)).get().getName() + " - " + i.get(1) + "\n";
+//                items += productRepository.findById(i.get(0)).get().getName() + " - " + i.get(1) + "\n";
+                items.put(productRepository.findById(i.get(0)).get().getName(), i.get(1));
             }
             orderHistory.setOrderStatusEnum(OrderStatusEnum.SUCCESS);
             orderHistory.setItems(items);
