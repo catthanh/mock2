@@ -62,23 +62,24 @@
 
   <logger name="com.example.mock2.gallery.GalleryService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
-    <appender-ref ref="STDOUT" />
   </logger>
   <logger name="com.example.mock2.user.UserService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
-    <appender-ref ref="STDOUT" />
   </logger>
   <logger name="com.example.mock2.product.ProductService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
-    <appender-ref ref="STDOUT" />
   </logger>
   <logger name="com.example.mock2.security.AuthService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
-    <appender-ref ref="STDOUT" />
   </logger>
   <logger name="com.example.mock2.security.CartService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
-    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="com.example.mock2.security.ProductReviewService" level="trace" additivity="false">
+    <appender-ref ref="SAVE-TO-FILE" />
+  </logger>
+  <logger name="com.example.mock2.security.OrderHistoryService" level="trace" additivity="false">
+    <appender-ref ref="SAVE-TO-FILE" />
   </logger>
   <include resource="org/springframework/boot/logging/logback/base.xml" />
 </configuration>

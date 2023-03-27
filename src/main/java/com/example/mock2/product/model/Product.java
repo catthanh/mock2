@@ -50,11 +50,12 @@ public class Product {
     }
 
     public void setReviewScore() {
-        double averageStar = 0.0;
+        double averageStar = 0;
         for (ProductReview review : reviews) {
             averageStar = review.getStar() + averageStar;
         }
-        this.reviewScore = Math.round((averageStar / reviews.size())*10)/10;
+        averageStar = averageStar / (double) reviews.size();
+        this.reviewScore = Math.round(averageStar * 10.0) / 10.0;
     }
 
 }

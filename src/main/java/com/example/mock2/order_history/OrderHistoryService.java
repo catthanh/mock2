@@ -1,5 +1,16 @@
 package com.example.mock2.order_history;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.example.mock2.cart.CartRepository;
 import com.example.mock2.cart.model.Cart;
 import com.example.mock2.common.dto.request.PaginationQuery;
@@ -10,18 +21,8 @@ import com.example.mock2.order_history.model.OrderStatusEnum;
 import com.example.mock2.product.ProductRepository;
 import com.example.mock2.security.config.AuthenticationPrinciple;
 import com.example.mock2.user.UserRepository;
-import lombok.AllArgsConstructor;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class OrderHistoryService {
     public OrderHistory createInvoice(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AuthenticationPrinciple authenticationPrinciple = (AuthenticationPrinciple) authentication.getPrincipal();
+
         Optional<Cart> cart = cartRepository.findById(authenticationPrinciple.getId());
         if (cart.isEmpty()) {
             throw new NotFoundException("Cart not found");

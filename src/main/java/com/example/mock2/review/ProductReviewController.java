@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mock2.common.dto.response.Response;
 import com.example.mock2.review.dto.request.ReviewRequest;
 import com.example.mock2.review.dto.response.ReviewResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +34,8 @@ public class ProductReviewController {
 
   @PostMapping("/review")
   @PreAuthorize("hasAuthority('ADMIN')")
-  public Response<ReviewResponse> addReview(@RequestBody ReviewRequest reviewRequest, @RequestParam Integer productId) {
+  public Response<ReviewResponse> addReview(@RequestBody ReviewRequest reviewRequest, @RequestParam Integer productId)
+      throws JsonMappingException, JsonProcessingException {
     ReviewResponse review = service.addReview(productId, reviewRequest.getStar());
     return Response.success(review);
   }

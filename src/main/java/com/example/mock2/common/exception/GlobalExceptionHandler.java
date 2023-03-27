@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = BadRequestException.class)
     public Response<Void> handleBadRequestException(BadRequestException e) {
-        logger.error("MaxUploadSizeExceededException: {}", e.getClass().getName() + " " + e.getMessage());
+        logger.error("BadRequestException: {}", e.getClass().getName() + " " + e.getMessage());
         return Response.error(e.getMessage());
     }
 }
