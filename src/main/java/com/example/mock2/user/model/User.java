@@ -1,6 +1,5 @@
 package com.example.mock2.user.model;
 
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Set;
 
 import com.example.mock2.cart.model.Cart;
 import com.example.mock2.gallery.model.Gallery;
+import com.example.mock2.review.model.ProductReview;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -60,6 +60,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Gallery> galleries;
+
+    @OneToMany(mappedBy = "user")
+    private List<ProductReview> reviews;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,

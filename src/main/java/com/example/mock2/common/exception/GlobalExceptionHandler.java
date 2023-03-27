@@ -1,6 +1,5 @@
 package com.example.mock2.common.exception;
 
-
 import com.example.mock2.common.dto.response.Response;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public Response<Void> handleParseEnumError(HttpMessageNotReadableException e) {
-        logger.error("HttpMessageNotReadableException: {}", e.getClass().getName()+ " " +e.getMessage());
+        logger.error("HttpMessageNotReadableException: {}", e.getClass().getName() + " " + e.getMessage());
         if (e.getCause() != null && e.getCause() instanceof InvalidFormatException) {
             Matcher match = ENUM_MSG.matcher(e.getCause().getMessage());
             if (match.find()) {
@@ -52,21 +51,22 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public Response<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        logger.error("MethodArgumentNotValidException: {}", e.getClass().getName()+ " " +e.getMessage());
+        logger.error("MethodArgumentNotValidException: {}", e.getClass().getName() + " " + e.getMessage());
         return Response.error(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(value = {WrongcredentialException.class, AuthenticationException.class, AccessDeniedException.class})
+    @ExceptionHandler(value = { WrongcredentialException.class, AuthenticationException.class,
+            AccessDeniedException.class })
     public Response<Void> handleUnauthorizedException(Exception e) {
-        logger.error("Unauthorized Exception: {}", e.getClass().getName()+ " " +e.getMessage());
+        logger.error("Unauthorized Exception: {}", e.getClass().getName() + " " + e.getMessage());
         return Response.error(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = Exception.class)
     public Response<Void> handleException(Exception e) {
-        logger.error("Exception: {}", e.getClass().getName()+ " " +e.getMessage());
+        logger.error("Exception: {}", e.getClass().getName() + " " + e.getMessage());
         e.printStackTrace();
         return Response.internalServerError("Internal Server Error");
     }
@@ -74,7 +74,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
     public Response<Void> handleMaxSizeException(MaxUploadSizeExceededException e) {
-        logger.error("MaxUploadSizeExceededException: {}", e.getClass().getName()+ " " +e.getMessage());
+        logger.error("MaxUploadSizeExceededException: {}", e.getClass().getName() + " " + e.getMessage());
         return Response.error("One or More files are too large!");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = BadRequestException.class)
+    public Response<Void> handleBadRequestException(BadRequestException e) {
+        logger.error("MaxUploadSizeExceededException: {}", e.getClass().getName() + " " + e.getMessage());
+        return Response.error(e.getMessage());
     }
 }

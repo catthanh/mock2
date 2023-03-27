@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.mock2.cart.model.CartProduct;
 import com.example.mock2.gallery.model.Gallery;
+import com.example.mock2.review.model.ProductReview;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -23,13 +24,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Product{
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private double price;
-    private double reviewScore = 0;
+    private double reviewScore;
     private int quantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,9 +40,21 @@ public class Product{
     @OneToMany(mappedBy = "product")
     private List<Gallery> galleries;
 
-    public Product(String name, double price, int quantity){
+    @OneToMany(mappedBy = "product")
+    private List<ProductReview> reviews;
+
+    public Product(String name, double price, int quantity) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
     }
+
+    public void setReviewScore() {
+        double averageStar = 0.0;
+        for (ProductReview review : reviews) {
+            averageStar = review.getStar() + averageStar;
+        }
+        this.reviewScore = Math.round((averageStar / reviews.size())*10)/10;
+    }
+
 }
