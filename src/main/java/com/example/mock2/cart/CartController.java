@@ -3,7 +3,7 @@ package com.example.mock2.cart;
 import com.example.mock2.cart.dto.request.AddProductRequest;
 import com.example.mock2.cart.dto.request.RemoveProductRequest;
 import com.example.mock2.cart.dto.request.UpdateProductQuantityRequest;
-import com.example.mock2.cart.dto.response.CartItem;
+import com.example.mock2.cart.dto.response.CartProductResponse;
 import com.example.mock2.common.dto.request.PaginationQuery;
 import com.example.mock2.common.dto.response.Response;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/add-product")
-    public Response<CartItem> addProduct(@RequestBody AddProductRequest addProductRequest) {
-        return Response.success(cartService.addProduct(addProductRequest),CartItem::of);
+    public Response<CartProductResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
+        return Response.success(cartService.addProduct(addProductRequest), CartProductResponse::of);
     }
 
     @DeleteMapping("/remove-product")
@@ -31,13 +31,13 @@ public class CartController {
     }
 
     @PutMapping("/update-product-quantity")
-    public Response<CartItem> updateProductQuantity(@RequestBody UpdateProductQuantityRequest updateProductQuantityRequest) {
-        return Response.success(cartService.updateProductQuantity(updateProductQuantityRequest),CartItem::of);
+    public Response<CartProductResponse> updateProductQuantity(@RequestBody UpdateProductQuantityRequest updateProductQuantityRequest) {
+        return Response.success(cartService.updateProductQuantity(updateProductQuantityRequest), CartProductResponse::of);
     }
 
     @GetMapping()
-    public Response<List<CartItem>> getItems(PaginationQuery paginationQuery) {
-        return Response.paging(cartService.getCartProducts(paginationQuery),CartItem::of);
+    public Response<List<CartProductResponse>> getItems(PaginationQuery paginationQuery) {
+        return Response.paging(cartService.getCartProducts(paginationQuery), CartProductResponse::of);
     }
 
 
