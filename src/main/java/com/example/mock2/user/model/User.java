@@ -1,13 +1,16 @@
 package com.example.mock2.user.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.example.mock2.cart.model.Cart;
 import com.example.mock2.gallery.model.Gallery;
+import com.example.mock2.order_history.model.OrderHistory;
 import com.example.mock2.review.model.ProductReview;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,6 +26,7 @@ import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
 
 @Getter
 @Setter
@@ -63,6 +67,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<ProductReview> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<OrderHistory> orderHistories = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
