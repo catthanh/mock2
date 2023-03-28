@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -130,9 +131,9 @@ public class GalleryService {
         return getFilePath(file);
     }
 
-    public FileUrlResponse loadImageForUser(Integer userId) {
-        Gallery file = galleryRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Not found user"));
+    public FileUrlResponse loadImageForUser() {
+        Gallery file = galleryRepository.findByUserId(getCurrentUser().getId())
+                .orElseThrow(() -> new NotFoundException("Not found image"));
         return getFilePath(file);
     }
 
@@ -140,7 +141,8 @@ public class GalleryService {
     public List<FileUrlResponse> loadAllForProduct(Integer productId) {
         boolean status = galleryRepository.findByProductId(productId).isEmpty();
         if (!status)
-            return galleryRepository.findByProductId(productId);
+            return galleryRepository.findByProductId(productId).stream().map((g) -> getFilePath(g))
+                    .collect(Collectors.toList());
         throw new NotFoundException("No Product image");
     }
 

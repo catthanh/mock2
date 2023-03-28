@@ -1,5 +1,7 @@
 package com.example.mock2.gallery;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class GalleryController {
     @Autowired
-    public final GalleryService galleryService;
+    private final GalleryService galleryService;
 
     @PostMapping("/gallery/user")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
@@ -40,15 +42,21 @@ public class GalleryController {
     }
 
     @GetMapping("/gallery/product/{id}")
-    public Response<FileUrlResponse> loadImageForProduct(@PathVariable(name = "id") Integer productId){
-        return Response.success(galleryService.loadImageForProduct(productId));
+    public Response<List<FileUrlResponse>> loadImageForProduct(@PathVariable(name = "id") Integer productId) {
+        return Response.success(galleryService.loadAllForProduct(productId));
+    }
+
+    @GetMapping("/gallery/user")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    public Response<FileUrlResponse> loadImageForUser() {
+        return Response.success(galleryService.loadImageForUser());
     }
 
     @DeleteMapping("gallery/product/delete")
-    public Response<String> deleteFileForProduct(@RequestParam String fileName, @RequestParam Integer productId){
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Response<String> deleteFileForProduct(@RequestParam String fileName, @RequestParam Integer productId) {
         String message = galleryService.deleteFileForProduct(fileName, productId);
         return Response.success(message);
     }
-
 
 }

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.mock2.gallery.dto.response.FileUrlResponse;
 import com.example.mock2.gallery.model.Gallery;
 
 @Repository
@@ -22,7 +21,7 @@ public interface GalleryRepository extends JpaRepository<Gallery, Long> {
 
   Optional<Gallery> findByNameAndProductId(String fileName, Integer productId);
 
-  List<FileUrlResponse> findByProductId(Integer productId);
+  List<Gallery> findByProductId(Integer productId);
 
   Integer countByProductId(Integer id);
 }

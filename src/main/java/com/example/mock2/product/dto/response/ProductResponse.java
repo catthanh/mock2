@@ -3,6 +3,7 @@ package com.example.mock2.product.dto.response;
 import com.example.mock2.product.model.Product;
 import com.example.mock2.review.dto.response.ReviewResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +22,8 @@ public class ProductResponse {
     private double price;
     private int quantity;
     private ReviewResponse review;
-    public static ProductResponse of(Product product){
+
+    public static ProductResponse of(Product product) {
         return new ProductResponse()
                 .setId(product.getId())
                 .setName(product.getName())

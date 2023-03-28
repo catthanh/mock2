@@ -23,9 +23,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductReviewService {
   private final ProductReviewRepository repository;
   private final ProductRepository productRepository;
@@ -33,21 +35,24 @@ public class ProductReviewService {
   private final OrderHistoryRepository orderHistoryRepository;
 
   public ReviewResponse getReview(Integer productId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    AuthenticationPrinciple user = (AuthenticationPrinciple) authentication.getPrincipal();
 
-    ProductReview review = repository.findByUserIdAndProductId(user.getId(), productId).orElse(null);
+    Double review = repository.getAverageByProductId(productId).orElse(null);
     if (review == null) {
       return ReviewResponse.builder().star(Math.round(5 * 10.0) / 10.0).createdDate(new Date())
           .build();
     }
-    return ReviewResponse.builder().star(Math.round(review.getStar() * 10.0) / 10.0).createdDate(review.getCreationDate())
+    return ReviewResponse.builder().star(Math.round(review * 10.0) / 10.0)
         .build();
   }
 
   public ReviewResponse addReview(Integer productId, double star) throws JsonMappingException, JsonProcessingException {
+    if (star > 5 || star < 0)
+      throw new BadRequestException("Star must be 0 < star < 5");
+    Product product = productRepository.findById(productId).get();
+
     // check whether bought this product or not
     if (!isBoughtProduct(productId, getCurrentUser().getId())) {
+      log.error("Error Have Not buy {} yet - {}", product.getName(), getCurrentUser().getUsername());
       throw new BadRequestException("You have to buy this product to review");
     }
 
@@ -59,16 +64,18 @@ public class ProductReviewService {
     review.setModifiedBy(getCurrentUser().getUsername());
     repository.save(review);
 
-    Product product = productRepository.findById(productId).get();
     product.setReviewScore();
     productRepository.save(product);
+
+    log.trace("Add Review for {} - By {}", product.getName(), getCurrentUser().getUsername());
     return ReviewResponse.builder().star(star).createdDate(new Date()).build();
   }
 
   public ReviewResponse updateReview(Integer productId, double star) {
+    if (star > 5 || star < 0)
+      throw new BadRequestException("Star must be 0 < star < 5");
     // check product existed or not
     checkProductExisted(productId);
-
     ProductReview existProductReview = repository.findByUserIdAndProductId(getCurrentUser().getId(), productId)
         .orElseThrow(() -> new NotFoundException("not found review"));
 
@@ -76,23 +83,29 @@ public class ProductReviewService {
     existProductReview.setModifiedBy(getCurrentUser().getUsername());
     existProductReview.setStar(star);
     repository.save(existProductReview);
+
     Product product = productRepository.findById(productId).get();
     product.setReviewScore();
     productRepository.save(product);
+    log.trace("Update Review for {} - By {}", product.getName(), getCurrentUser().getUsername());
     return ReviewResponse.builder().star(star).createdDate(new Date()).build();
   }
 
   public void deleteReview(Integer productId) {
     // check whether product exists
-    checkProductExisted(productId);
+    Product product = checkProductExisted(productId);
 
     ProductReview existProductReview = repository.findByUserIdAndProductId(getCurrentUser().getId(), productId)
         .orElseThrow(() -> new NotFoundException("not found review"));
     repository.delete(existProductReview);
+
+    product.setReviewScore();
+    productRepository.save(product);
+    log.trace("Delete Review in {} - By {}", product.getName(), getCurrentUser().getUsername());
   }
 
-  private void checkProductExisted(Integer productId) {
-    productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Not found product"));
+  private Product checkProductExisted(Integer productId) {
+    return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Not found product"));
   }
 
   @SuppressWarnings("unchecked")
@@ -103,12 +116,13 @@ public class ProductReviewService {
 
     List<String> orderHistory = orderHistoryRepository.getByUserId(userId);
 
-    //  convert json string to map
+    // convert json string to map
     for (String item : orderHistory) {
       Map<String, Object> map = mapper.readValue(item, HashMap.class);
       if (map.containsKey(productName))
         return true;
     }
+
     return false;
   }
 
