@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Accessors(chain = true)
 @NoArgsConstructor
 @Entity
+@ToString
 public class CartProduct {
     @EmbeddedId
     private CartProductId id;
