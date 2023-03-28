@@ -1,6 +1,7 @@
 package com.example.mock2.cart.dto.response;
 
 import com.example.mock2.cart.model.CartProduct;
+import com.example.mock2.product.dto.response.ProductResponse;
 import com.example.mock2.product.model.Product;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,13 +18,13 @@ import lombok.experimental.Accessors;
 @ToString
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CartItem {
-    Product product;
+public class CartProductResponse {
+    ProductResponse product;
     Integer quantity;
 
-    public static CartItem of(CartProduct cartProduct) {
-        return new CartItem()
-                .setProduct(cartProduct.getProduct())
+    public static CartProductResponse of(CartProduct cartProduct) {
+        return new CartProductResponse()
+                .setProduct(ProductResponse.of(cartProduct.getProduct()))
                 .setQuantity(cartProduct.getQuantity());
     }
 }

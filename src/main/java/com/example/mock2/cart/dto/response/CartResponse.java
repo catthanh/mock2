@@ -1,8 +1,6 @@
 package com.example.mock2.cart.dto.response;
 
 import com.example.mock2.cart.model.Cart;
-import com.example.mock2.cart.model.CartProduct;
-import com.example.mock2.product.model.Product;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -23,11 +21,11 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CartResponse {
     Integer id;
-    List<CartItem> items;
+    List<CartProductResponse> items;
 
     public static CartResponse of(Cart cart) {
         return new CartResponse()
                 .setId(cart.getId())
-                .setItems(cart.getCartProducts().stream().map(CartItem::of).collect(Collectors.toList()));
+                .setItems(cart.getCartProducts().stream().map(CartProductResponse::of).collect(Collectors.toList()));
     }
 }
