@@ -24,7 +24,7 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Inte
     @Query(value = "select p.price from user u " +
             "join cart c on u.id = c.user_id " +
             "join cart_product cp on c.id = cp.cart_id " +
-            "join product p on p.id = cp.product_id where u.id = ?1" , nativeQuery = true)
+            "join product p on p.id = cp.product_id where u.id = ?1 order by cp.product_id asc" , nativeQuery = true)
     List<Double> getPrice(int id);
 
     @Query(value = "select p.quantity from user u " +
