@@ -81,5 +81,5 @@
   <logger name="com.example.mock2.security.OrderHistoryService" level="trace" additivity="false">
     <appender-ref ref="SAVE-TO-FILE" />
   </logger>
-  <include resource="org/springframework/boot/logging/logback/base.xml" />
+  <!-- <include resource="org/springframework/boot/logging/logback/base.xml" /> -->
 </configuration>

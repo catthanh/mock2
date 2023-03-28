@@ -19,12 +19,14 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "order_history")
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class OrderHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +40,5 @@ public class OrderHistory {
     private double total;
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum orderStatusEnum = OrderStatusEnum.PENDING_PURCHASE;
-
 
 }

@@ -23,9 +23,11 @@ import com.example.mock2.product.model.Product;
 import com.example.mock2.security.config.AuthenticationPrinciple;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @Service
+@Slf4j
 public class CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
@@ -40,17 +42,18 @@ public class CartService {
         }
         if (addProductRequest.getQuantity() <= 0) {
             throw new NotFoundException("Quantity must be greater than 0");
-            }
-            Optional<Product> product = productRepository.findById(addProductRequest.getProductId());
-            if (product.isEmpty()) {
-                throw new NotFoundException("Product not found");
-            }
+        }
+        Optional<Product> product = productRepository.findById(addProductRequest.getProductId());
+        if (product.isEmpty()) {
+            throw new NotFoundException("Product not found");
+        }
         Optional<CartProduct> cartProduct = cartProductRepository.findByCartAndProduct(cart.get(), product.get());
         if (cartProduct.isPresent()) {
             if (product.get().getQuantity() < cartProduct.get().getQuantity() + addProductRequest.getQuantity()) {
                 throw new CommonLogicException("Quantity must be less than or equal to product quantity");
             }
             cartProduct.get().setQuantity(cartProduct.get().getQuantity() + addProductRequest.getQuantity());
+            log.trace("Add Product to Cart {}", cartProduct.get(), authenticationPrinciple.getUsername());
             return cartProductRepository.save(cartProduct.get());
         } else {
             if (product.get().getQuantity() < addProductRequest.getQuantity()) {
@@ -58,6 +61,7 @@ public class CartService {
             }
 
             CartProduct newCartProduct = new CartProduct(cart.get(), product.get(), addProductRequest.getQuantity());
+            log.trace("Add Product to Cart {} - {}", newCartProduct, authenticationPrinciple.getUsername());
             return cartProductRepository.save(newCartProduct);
         }
     }
@@ -78,6 +82,7 @@ public class CartService {
             throw new NotFoundException("Product not found in cart");
         }
         cartProductRepository.delete(cartProduct.get());
+        log.trace("Delete Product in Cart {} - {}", cartProduct.get(), authenticationPrinciple.getUsername());
     }
 
     public CartProduct updateProductQuantity(UpdateProductQuantityRequest updateProductQuantityRequest) {
@@ -95,6 +100,8 @@ public class CartService {
             throw new NotFoundException("Product not found");
         }
         Optional<CartProduct> cartProduct = cartProductRepository.findByCartAndProduct(cart.get(), product.get());
+        log.trace("Update Product to Cart from {} to {} - By {}", cartProduct, updateProductQuantityRequest,
+                authenticationPrinciple.getUsername());
         if (Objects.equals(updateProductQuantityRequest.getQuantity(), cartProduct.get().getQuantity())) {
             return cartProduct.get();
         } else {
@@ -113,7 +120,8 @@ public class CartService {
         if (cart.isEmpty()) {
             throw new NotFoundException("Cart not found");
         }
-        Pageable pageable = PageRequest.of(paginationQuery.getPageRequest().getPageNumber(), paginationQuery.getPageRequest().getPageSize());
+        Pageable pageable = PageRequest.of(paginationQuery.getPageRequest().getPageNumber(),
+                paginationQuery.getPageRequest().getPageSize());
         return cartProductRepository.findAllByCart(cart.get(), pageable);
 
     }
